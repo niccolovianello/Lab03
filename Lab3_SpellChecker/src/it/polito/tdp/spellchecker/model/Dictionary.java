@@ -7,9 +7,8 @@ import java.util.*;
 
 public class Dictionary {
 	
-	private List<String> dizionarioLinked = new LinkedList<String>();
+	private List<String> dizionario = new LinkedList<String>();
 	private List<RichWord> parole = new LinkedList<RichWord>();
-	//private List<String> dizionarioArray = new ArrayList<String>();
 	
 	public void loadDictionary(String input) {
 		try {
@@ -17,8 +16,7 @@ public class Dictionary {
 			BufferedReader br = new BufferedReader(fr);
 			String word;
 			while ((word = br.readLine()) != null) {
-				dizionarioLinked.add(word.toLowerCase().replaceAll("[.,\\\\/#!?$%\\\\^&\\\\*;:{}=\\\\-_`~()\\\\[\\\\]\\\"]", ""));
-				//dizionarioArray.add(word.toLowerCase().replaceAll("[.,\\\\/#!?$%\\\\^&\\\\*;:{}=\\\\-_`~()\\\\[\\\\]\\\"]", ""));
+				dizionario.add(word.toLowerCase().replaceAll("[.,\\\\/#!?$%\\\\^&\\\\*;:{}=\\\\-_`~()\\\\[\\\\]\\\"]", ""));
 			}
 			br.close();
 		}
@@ -31,26 +29,41 @@ public class Dictionary {
 	 * @return the dizionario
 	 */
 	public List<String> getDizionario() {
-		return dizionarioLinked;
-		//return dizionarioArray;
+		return dizionario;
+	}
+	
+	public List<RichWord> spellCheckLinear(String[] inputTextList) {
+		parole.clear();
+		
+		for(String p : inputTextList){
+			
+			boolean trovata = false;
+			if(dizionario.contains(p)) {
+				trovata = true;
+				parole.add(new RichWord(p, trovata));
+			}
+			else
+				parole.add(new RichWord(p, trovata));
+		}
+		return parole;
 	}
 	
 	public List<RichWord> spellCheckDicothomic(String[] inputTextList) {
-		double t = System.nanoTime()/Math.pow(10, 9);
-		int endIndex = (int)dizionarioLinked.size()-1;
-		int startIndex = 0;
-		boolean trovata = false;
 		parole.clear();
 		
-		while(trovata == false && endIndex > startIndex) {
+		for(String p : inputTextList){
 			
-			int half = (int)((endIndex+startIndex)/2);
-			String word= dizionarioLinked.get(half);
+			boolean trovata = false;
+			int startIndex = 0;
+			int endIndex = (int)dizionario.size()-1;
 			
-			for(String p : inputTextList) {
+			while(trovata == false && endIndex > startIndex && endIndex-startIndex != 1) {
+				
+				int half = (int)((endIndex+startIndex)/2);
+				String word= dizionario.get(half);
+				
 				if(p.compareTo(word) == 0) {
 					trovata = true;
-					parole.add(new RichWord(p, trovata));
 					break;
 				}
 				else {
@@ -62,6 +75,7 @@ public class Dictionary {
 					}
 				}
 			}
+			parole.add(new RichWord(p, trovata));
 		}
 		return parole;
 	}

@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.spellchecker.model.Dictionary;
+import it.polito.tdp.spellchecker.model.RichWord;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -40,48 +41,42 @@ public class SpellCheckerController {
     private Button btnClear;
 
     @FXML
-    private Label txtTempo;
+    private Label tempoTxt;
 
     @FXML
     void doClearText(ActionEvent event) {
     	txtResult.clear();
     	txtInput.clear();
     	errTxt.setText("");
-    	txtTempo.setText("");
+    	tempoTxt.setText("");
     }
 
     @FXML
     void doSpellCheck(ActionEvent event) {
     	double t = System.nanoTime()/Math.pow(10, 9);
+    	txtResult.clear();
     	String lingua = tendina.getValue();
-    	//int cont = 0;
     	model.loadDictionary("rsc/"+lingua+".txt");
     	String input = txtInput.getText().replaceAll("[.,\\\\/#!?$%\\\\^&\\\\*;:{}=\\\\-_`~()\\\\[\\\\]\\\"]", "").toLowerCase();
     	String testo[] = input.split(" ");
-    	/*for(int i=0; i<testo.length; i++) {
-    		if(!model.getDizionario().contains(testo[i])) {
-    			txtResult.appendText(testo[i]+"\n");
+    	
+    	int cont = 0;
+    	
+    	for(RichWord r : model.spellCheckDicothomic(testo)) 
+    	//for(RichWord r : model.spellCheckLinear(testo))
+    		{
+    		if(!r.isCorrect()) {
+    			txtResult.appendText(r.getParola()+"\n");
     			cont++;
     		}
-    	}*/
+    	}
     	
-    	int correct = model.spellCheckDicothomic(testo).size();
-    	int err = testo.length - correct;
-    	
-    	/*if(cont == 1)
-    		errTxt.setText("C'è "+cont+" errore.");
-    	else
-    		errTxt.setText("Ci sono "+cont+" errori.");
-    	txtTempo.setText(System.nanoTime()/Math.pow(10, 9)-t+" secondi");*/
-    	
-    	if(err == 1)
+    	if(cont == 1)
     		errTxt.setText("C'è 1 errore.");
     	else
-    		errTxt.setText("Ci sono "+err+" errori.");
-    	txtTempo.setText(System.nanoTime()/Math.pow(10, 9)-t+" secondi");
+    		errTxt.setText("Ci sono "+cont+" errori.");
     	
-    	
-    	
+    	tempoTxt.setText(System.nanoTime()/Math.pow(10, 9)-t+" secondi");
     }
 
     @FXML
@@ -92,7 +87,7 @@ public class SpellCheckerController {
         assert tendina != null : "fx:id=\"tendina\" was not injected: check your FXML file 'SpellChecker.fxml'.";
         assert errTxt != null : "fx:id=\"errTxt\" was not injected: check your FXML file 'SpellChecker.fxml'.";
         assert btnClear != null : "fx:id=\"btnClear\" was not injected: check your FXML file 'SpellChecker.fxml'.";
-        assert txtTempo != null : "fx:id=\"txtTempo\" was not injected: check your FXML file 'SpellChecker.fxml'.";
+        assert tempoTxt != null : "fx:id=\"tempoTxt\" was not injected: check your FXML file 'SpellChecker.fxml'.";
     }
     
     public void setModel(Dictionary model) {
