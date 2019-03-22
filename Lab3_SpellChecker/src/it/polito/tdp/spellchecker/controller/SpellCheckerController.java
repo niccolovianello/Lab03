@@ -54,7 +54,7 @@ public class SpellCheckerController {
     void doSpellCheck(ActionEvent event) {
     	double t = System.nanoTime()/Math.pow(10, 9);
     	String lingua = tendina.getValue();
-    	int cont = 0;
+    	//int cont = 0;
     	model.loadDictionary("rsc/"+lingua+".txt");
     	String input = txtInput.getText().replaceAll("[.,\\\\/#!?$%\\\\^&\\\\*;:{}=\\\\-_`~()\\\\[\\\\]\\\"]", "").toLowerCase();
     	String testo[] = input.split(" ");
@@ -65,10 +65,23 @@ public class SpellCheckerController {
     		}
     	}*/
     	
-    	model.spellCheckDicothomic(testo);
+    	int correct = model.spellCheckDicothomic(testo).size();
+    	int err = testo.length - correct;
     	
-    	errTxt.setText("Ci sono "+cont+" errori.");
+    	/*if(cont == 1)
+    		errTxt.setText("C'è "+cont+" errore.");
+    	else
+    		errTxt.setText("Ci sono "+cont+" errori.");
+    	txtTempo.setText(System.nanoTime()/Math.pow(10, 9)-t+" secondi");*/
+    	
+    	if(err == 1)
+    		errTxt.setText("C'è 1 errore.");
+    	else
+    		errTxt.setText("Ci sono "+err+" errori.");
     	txtTempo.setText(System.nanoTime()/Math.pow(10, 9)-t+" secondi");
+    	
+    	
+    	
     }
 
     @FXML

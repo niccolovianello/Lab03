@@ -37,19 +37,20 @@ public class Dictionary {
 	
 	public List<RichWord> spellCheckDicothomic(String[] inputTextList) {
 		double t = System.nanoTime()/Math.pow(10, 9);
-		int endIndex = (int)dizionarioLinked.size();
+		int endIndex = (int)dizionarioLinked.size()-1;
 		int startIndex = 0;
 		boolean trovata = false;
 		parole.clear();
 		
 		while(trovata == false && endIndex > startIndex) {
 			
-			int half = (int)((endIndex-startIndex)/2);
+			int half = (int)((endIndex+startIndex)/2);
 			String word= dizionarioLinked.get(half);
 			
 			for(String p : inputTextList) {
 				if(p.compareTo(word) == 0) {
 					trovata = true;
+					parole.add(new RichWord(p, trovata));
 					break;
 				}
 				else {
@@ -60,7 +61,6 @@ public class Dictionary {
 						startIndex = half;
 					}
 				}
-				parole.add(new RichWord(p, trovata));
 			}
 		}
 		return parole;
